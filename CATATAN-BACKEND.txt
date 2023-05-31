@@ -1,0 +1,10 @@
+- composer require laravel/jetstream
+    php artisan jetstream:install livewire
+    npm install
+    npm run build
+    php artisan migrate
+    php artisan vendor:publish --tag=jetstream-views
+- composer require yajra/laravel-datatables-oracle:"^10.0"
+    php artisan vendor:publish --tag=datatables
+
+- setup migration
