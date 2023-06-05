@@ -167,7 +167,9 @@ class SignUpPage extends StatelessWidget {
         height: 50,
         width: double.infinity,
         margin: EdgeInsets.only(top: 30),
-        child: TextButton(onPressed: (){}, child: Text("Sign Up", style: primaryTextStyle.copyWith(
+        child: TextButton(onPressed: (){
+          Navigator.pushNamed(context, '/home');
+        }, child: Text("Sign Up", style: primaryTextStyle.copyWith(
           fontSize: 16,
           fontWeight: medium,
         ),),
