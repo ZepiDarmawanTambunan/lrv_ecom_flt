@@ -31,9 +31,9 @@ class _MainPageState extends State<MainPage> {
       return ClipRRect(
         borderRadius: BorderRadius.vertical(top: Radius.circular(30),),
         child: BottomAppBar(
-          shape: CircularNotchedRectangle(),
-          notchMargin: 12,
-          clipBehavior: Clip.antiAlias,
+          shape: CircularNotchedRectangle(),  //effect dgn floating action btn
+          notchMargin: 12,  //effect dgn floating action btn
+          clipBehavior: Clip.antiAlias, //effect dgn floating action btn
           child: BottomNavigationBar(
             onTap: (value){
               setState(() {
@@ -41,7 +41,7 @@ class _MainPageState extends State<MainPage> {
               });
             },
             backgroundColor: backgroundColor4,
-            type: BottomNavigationBarType.fixed, //agar background color active
+            type: BottomNavigationBarType.fixed, //agar background color bisa dipakai
             items: [
             BottomNavigationBarItem(
               icon: Container(
@@ -50,7 +50,7 @@ class _MainPageState extends State<MainPage> {
                   bottom: 10,
                 ),
                 child: Image.asset('assets/icon_home.png', width: 21,
-                color: currentIndex == 0 ? primaryColor : Color(0xff808191),
+                color: currentIndex == 0 ? primaryColor : Color(0xff808191), // warna item yg active
                 ),
               ),
               label: '',

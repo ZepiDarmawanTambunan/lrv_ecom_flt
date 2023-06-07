@@ -44,7 +44,7 @@ class SignUpPage extends StatelessWidget {
                     Image.asset('assets/icon_name.png',width: 17,),
                     SizedBox(width: 16,),
                     Expanded(child: TextFormField(
-                      style: primaryTextStyle,
+                      style: primaryTextStyle,//input collapsed = input tanpa border/kosongan
                       decoration: InputDecoration.collapsed(hintText: "Your Full Name", hintStyle: subtitleTextStyle),
                     ),),
                   ],
