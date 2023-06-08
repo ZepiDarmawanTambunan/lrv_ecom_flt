@@ -106,7 +106,9 @@ class CartPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                onPressed: (){}, child: 
+                onPressed: (){
+                  Navigator.pushNamed(context, '/checkout');
+                }, child: 
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
