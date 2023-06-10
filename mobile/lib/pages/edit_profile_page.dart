@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/models/user_model.dart';
+import 'package:mobile/providers/auth_provider.dart';
 import 'package:mobile/theme.dart';
+import 'package:provider/provider.dart';
 
 class EditProfilePage extends StatelessWidget {
   const EditProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    UserModel user = authProvider.user;
 
     AppBar header(){
       return AppBar(
@@ -32,7 +38,7 @@ class EditProfilePage extends StatelessWidget {
             TextFormField(
               style: primaryTextStyle,
               decoration: InputDecoration(
-                hintText: 'Alex keinnzal',
+                hintText: user.name,
                 hintStyle: primaryTextStyle,
                 enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(
@@ -52,11 +58,11 @@ class EditProfilePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Name", style: secondaryTextStyle.copyWith(fontSize: 13),),
+            Text("Username", style: secondaryTextStyle.copyWith(fontSize: 13),),
             TextFormField(
               style: primaryTextStyle,
               decoration: InputDecoration(
-                hintText: 'Alex keinnzal',
+                hintText: user.username,
                 hintStyle: primaryTextStyle,
                 enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(
@@ -80,7 +86,7 @@ class EditProfilePage extends StatelessWidget {
             TextFormField(
               style: primaryTextStyle,
               decoration: InputDecoration(
-                hintText: 'alex.kein@gmail.com',
+                hintText: user.email,
                 hintStyle: primaryTextStyle,
                 enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(
@@ -109,7 +115,9 @@ class EditProfilePage extends StatelessWidget {
               margin: EdgeInsets.only(top: defaultMargin),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                image: DecorationImage(image: AssetImage('assets/image_profile.png'))
+                image: DecorationImage(
+                  fit: BoxFit.fill, //agar buat img yg default kotak jadi masuk bulat
+                  image: NetworkImage(user.profilePhotoUrl))
               ),
             ), 
             nameInput(),

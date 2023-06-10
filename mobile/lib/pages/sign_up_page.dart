@@ -1,11 +1,76 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/providers/auth_provider.dart';
 import 'package:mobile/theme.dart';
+import 'package:mobile/widgets/loading_button.dart';
+import 'package:provider/provider.dart';
 
-class SignUpPage extends StatelessWidget {
-  const SignUpPage({super.key});
+class SignUpPage extends StatefulWidget {
+  SignUpPage({super.key});
+
+  @override
+  State<SignUpPage> createState() => _SignUpPageState();
+}
+
+class _SignUpPageState extends State<SignUpPage> {
+  TextEditingController nameController = TextEditingController(text: '');
+  TextEditingController usernameController = TextEditingController(text: '');
+  TextEditingController emailController = TextEditingController(text: '');
+  TextEditingController passwordController = TextEditingController(text: '');
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  bool isLoading = false;
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    usernameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+
+    // textform add validator 
+    // bool validateAndSave() {
+    //   final form = _formKey.currentState;
+    //   if (form!.validate()) {
+    //     form.save();
+    //     return true;
+    //   }
+    //   return false;
+    // }
+
+    handleSignUp() async{
+      // if(validateAndSave()){
+      //   print(true);
+      // }
+
+      setState(() {
+        isLoading = true;
+      });
+
+      if(await authProvider.register(name: nameController.text, 
+          username: usernameController.text, 
+          email: emailController.text, 
+          password: passwordController.text)){
+            nameController.text = '';
+            usernameController.text = '';
+            emailController.text = '';
+            passwordController.text = '';
+          Navigator.pushReplacementNamed(context, '/home');
+      }else{
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: alertColor,
+            content: Text('Gagal Terjadi kesalahan', textAlign: TextAlign.center,),),
+            );
+      }
+
+      setState(() {
+        isLoading = false;
+      });
+    }
 
     Widget header(){
       return Container(
@@ -15,7 +80,7 @@ class SignUpPage extends StatelessWidget {
           children: [
             Text('Sign Up', style: primaryTextStyle.copyWith(fontSize: 24,fontWeight: semiBold,),),
             SizedBox(height: 2,),
-            Text('Register and Happy Shoping', style: subtitleTextStyle,)
+            Text('Register and Happy Shoping', style: subtitleTextStyle,),
           ],
         ),
       );
@@ -44,6 +109,7 @@ class SignUpPage extends StatelessWidget {
                     Image.asset('assets/icon_name.png',width: 17,),
                     SizedBox(width: 16,),
                     Expanded(child: TextFormField(
+                      controller: nameController,
                       style: primaryTextStyle,//input collapsed = input tanpa border/kosongan
                       decoration: InputDecoration.collapsed(hintText: "Your Full Name", hintStyle: subtitleTextStyle),
                     ),),
@@ -79,6 +145,7 @@ class SignUpPage extends StatelessWidget {
                     Image.asset('assets/icon_username.png',width: 17,),
                     SizedBox(width: 16,),
                     Expanded(child: TextFormField(
+                      controller: usernameController,
                       style: primaryTextStyle,
                       decoration: InputDecoration.collapsed(hintText: "Your Username", hintStyle: subtitleTextStyle),
                     ),),
@@ -114,6 +181,7 @@ class SignUpPage extends StatelessWidget {
                     Image.asset('assets/icon_email.png',width: 17,),
                     SizedBox(width: 16,),
                     Expanded(child: TextFormField(
+                      controller: emailController,
                       style: primaryTextStyle,
                       decoration: InputDecoration.collapsed(hintText: "Your Email Address", hintStyle: subtitleTextStyle),
                     ),),
@@ -149,6 +217,7 @@ class SignUpPage extends StatelessWidget {
                     Image.asset('assets/icon_password.png',width: 17,),
                     SizedBox(width: 16,),
                     Expanded(child: TextFormField(
+                      controller: passwordController,
                       obscureText: true,
                       style: primaryTextStyle,
                       decoration: InputDecoration.collapsed(hintText: "Your Password", hintStyle: subtitleTextStyle),
@@ -167,9 +236,7 @@ class SignUpPage extends StatelessWidget {
         height: 50,
         width: double.infinity,
         margin: EdgeInsets.only(top: 30),
-        child: TextButton(onPressed: (){
-          Navigator.pushNamed(context, '/home');
-        }, child: Text("Sign Up", style: primaryTextStyle.copyWith(
+        child: TextButton(onPressed: handleSignUp, child: Text("Sign Up", style: primaryTextStyle.copyWith(
           fontSize: 16,
           fontWeight: medium,
         ),),
@@ -182,7 +249,7 @@ class SignUpPage extends StatelessWidget {
 
     Widget footer(){
       return Container(
-        margin: EdgeInsets.only(bottom: 30),
+        margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.1, ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -205,26 +272,27 @@ class SignUpPage extends StatelessWidget {
       );
     }
 
-    return Scaffold(
+    return Scaffold( 
+      resizeToAvoidBottomInset: true,
       backgroundColor: backgroundColor1,
-      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Container(
           margin: EdgeInsets.symmetric(
             horizontal: defaultMargin
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              header(),
-              nameInput(),
-              usernameInput(),
-              emailInput(),
-              passwordInput(),
-              signUpButton(),
-              Spacer(),
-              footer(),
-            ],
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              children: [
+                header(),
+                nameInput(),
+                usernameInput(),
+                emailInput(),
+                passwordInput(),
+                isLoading ? LoadingButton() : signUpButton(),
+                footer(),
+              ],
+            ),
           ),
         ),
       ),

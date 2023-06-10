@@ -1,10 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/models/user_model.dart';
+import 'package:mobile/providers/auth_provider.dart';
 import 'package:mobile/theme.dart';
+import 'package:provider/provider.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   Widget header(BuildContext context){
+
+    
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    UserModel user = authProvider.user;
+
+    handleLogout() async{
+      if(await authProvider.logout()){
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: primaryColor,
+            content: Text('Berhasil Logout', textAlign: TextAlign.center,),),
+            );
+      }
+    }
+
     return AppBar(
       backgroundColor: backgroundColor1,
       automaticallyImplyLeading: false,
@@ -15,17 +33,17 @@ class ProfilePage extends StatelessWidget {
           child: Row(
             children: [
               ClipOval(
-                child: Image.asset('assets/image_profile.png', width: 64,),
+                child: Image.network(user.profilePhotoUrl, width: 64,),
               ),
               SizedBox(width: 16,),
               Expanded(child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Hallo, Alex", style: primaryTextStyle.copyWith(
+                  Text("Hallo, ${user.name}", style: primaryTextStyle.copyWith(
                     fontSize: 24,
                     fontWeight: semiBold,
                   ),),
-                  Text('@alexkeinn', style: subtitleTextStyle.copyWith(
+                  Text('@${user.username}', style: subtitleTextStyle.copyWith(
                     fontSize: 16,
                   ),),
                 ],
@@ -34,7 +52,10 @@ class ProfilePage extends StatelessWidget {
                 onTap: (){
                   Navigator.pushNamedAndRemoveUntil(context, '/sign-in', (route) => false);
                 },
-                child: Image.asset('assets/button_exit.png', width: 20,)
+                child: GestureDetector(
+                  onTap: handleLogout,
+                  child: Image.asset('assets/button_exit.png', width: 20,),
+                  )
                 )
             ],
           ),
