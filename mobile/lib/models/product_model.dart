@@ -4,12 +4,12 @@ import 'package:mobile/models/gallery_model.dart';
 class ProductModel{
   int id;
   String name;
-  double price;
+  num price;
   String description;
   String? tags;
   CategoryModel? category;
-  DateTime createdAt;
-  DateTime updatedAt;
+  DateTime? createdAt;
+  DateTime? updatedAt;
   List<GalleryModel> galleries;
 
   ProductModel({
@@ -19,23 +19,25 @@ class ProductModel{
     required this.description,
     this.tags,
     this.category,
-    required this.createdAt,
-    required this.updatedAt,
+    this.createdAt,
+    this.updatedAt,
     required this.galleries
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json){
-    return ProductModel(
+    var data =  ProductModel(
       id: json['id'], 
       name: json['name'], 
       price: json['price'], 
       description: json['description'], 
-      tags: json['tags']!, 
-      category: CategoryModel.fromJson(json['category']!), 
-      galleries: (json['galleries'] as List).map((e) => GalleryModel.fromJson(e)).toList(),
-      createdAt: DateTime.parse(json['created_at']), 
-      updatedAt: DateTime.parse(json['updated_at']),
+      tags: json['tags'] ?? null, 
+      category: json['category'] != null ? CategoryModel.fromJson(json['category']) : null, 
+      galleries: (json['galleries'] as List).map<GalleryModel>((e) => GalleryModel.fromJson(e)).toList(),
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : null, 
+      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null,
     );
+    print(data.toJson());
+    return data;
   }
 
   Map<String, dynamic> toJson(){
@@ -45,10 +47,10 @@ class ProductModel{
       'price': price,
       'description': description,
       'tags': tags,
-      'category': category!.toJson(),
+      'category': category != null ? category!.toJson() : null,
       'galleries': galleries.map((e) => e.toJson()).toList(),
-      'created_at': createdAt.toString(),
-      'updated_at': updatedAt.toString(),
+      'created_at': createdAt != null ? createdAt!.toString() : null,
+      'updated_at': updatedAt != null ? updatedAt!.toString() : null,
     };
   }
 }

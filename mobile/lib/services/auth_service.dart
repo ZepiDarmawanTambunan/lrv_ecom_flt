@@ -44,9 +44,7 @@ class AuthService{
       'email': email,
       'password': password,
     });
-    
     var response = await http.post(url, headers: headers, body: body);
-
     if(response.statusCode == 200){
       var data = jsonDecode(response.body)['data'];
       data['user']['token'] = 'Bearer '+data['access_token'];

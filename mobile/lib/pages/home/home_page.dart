@@ -14,7 +14,6 @@ class HomePage extends StatelessWidget {
 
     AuthProvider authProvider = Provider.of<AuthProvider>(context);
     UserModel user = authProvider.user;
-
     Widget header(){
       return Container(
         margin: EdgeInsets.only(
