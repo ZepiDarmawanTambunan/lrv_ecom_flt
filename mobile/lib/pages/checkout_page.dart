@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/providers/auth_provider.dart';
+import 'package:mobile/providers/cart_provider.dart';
+import 'package:mobile/providers/transaction_provider.dart';
 import 'package:mobile/theme.dart';
 import 'package:mobile/widgets/checkout_card.dart';
+import 'package:mobile/widgets/loading_button.dart';
+import 'package:provider/provider.dart';
 
-class CheckoutPage extends StatelessWidget {
+class CheckoutPage extends StatefulWidget {
   const CheckoutPage({super.key});
 
+  @override
+  State<CheckoutPage> createState() => _CheckoutPageState();
+}
+
+class _CheckoutPageState extends State<CheckoutPage> {
   AppBar header(){
     return AppBar(
       backgroundColor: backgroundColor1,
@@ -15,6 +25,24 @@ class CheckoutPage extends StatelessWidget {
   }
 
   Widget content(BuildContext context){
+
+    bool isLoading = false;
+  
+  CartProvider cartProvider = Provider.of<CartProvider>(context);
+  TransactionProvider transactionProvider = Provider.of<TransactionProvider>(context);
+  AuthProvider authProvider = Provider.of<AuthProvider>(context);
+
+    handleCheckout() async{
+      setState(() {
+        isLoading = true;
+      });
+      if(await transactionProvider.checkout(authProvider.user.token, cartProvider.carts, cartProvider.totalPrice())){
+        cartProvider.carts = [];
+        Navigator.pushNamedAndRemoveUntil(context, '/checkout-success', (route) => false);
+      }
+      isLoading = false;
+    }
+
     return ListView(
       padding: EdgeInsets.symmetric(
         horizontal: defaultMargin
@@ -25,8 +53,9 @@ class CheckoutPage extends StatelessWidget {
           fontSize: 16,
           fontWeight: medium,
         ),),
-        CheckoutCard(),
-        CheckoutCard(),
+        Column(
+          children: cartProvider.carts.map((cart) => CheckoutCard(cart: cart)).toList(),
+        ),
 
         // NOTE ADDRESS DETAIL
         Container(
@@ -99,12 +128,32 @@ class CheckoutPage extends StatelessWidget {
                 height: 12,
               ),
               Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Product Quantity',
+                      style: secondaryTextStyle.copyWith(
+                        fontSize: 12,
+                      ),
+                    ),
+                    Text(
+                      '${cartProvider.totalItems()} Items',
+                      style: primaryTextStyle.copyWith(
+                        fontWeight: medium,
+                      ),
+                    ),
+                  ],
+                ),
+              SizedBox(
+                height: 12,
+              ),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('Product Price', style: secondaryTextStyle.copyWith(
                     fontSize: 12,
                   ),),
-                  Text('\$543.22', style: primaryTextStyle.copyWith(
+                  Text('\$${cartProvider.totalPrice()}', style: primaryTextStyle.copyWith(
                     fontWeight: medium,
                   ),),
                 ],
@@ -139,7 +188,7 @@ class CheckoutPage extends StatelessWidget {
                   Text('Total', style: priceTextStyle.copyWith(
                     fontWeight: semiBold,
                   ),),
-                  Text('\$543.22', style: priceTextStyle.copyWith(
+                  Text('\$${cartProvider.totalPrice()}', style: priceTextStyle.copyWith(
                     fontWeight: semiBold,
                   ),),
                 ],
@@ -156,16 +205,16 @@ class CheckoutPage extends StatelessWidget {
           thickness: 1,
           color: Color(0xff2E3141),
         ),
-        Container(
+        isLoading ? Container(
+          margin: EdgeInsets.only(bottom: 30),
+          child: LoadingButton()) :Container(
           height: 50,
           width: double.infinity,
           margin: EdgeInsets.symmetric(
             vertical: defaultMargin,
           ),
           child: TextButton(
-            onPressed: (){
-              Navigator.pushNamedAndRemoveUntil(context, '/checkout-success', (route) => false);
-            }, 
+            onPressed: handleCheckout, 
             style: TextButton.styleFrom(
               backgroundColor: primaryColor,
               shape: RoundedRectangleBorder(
