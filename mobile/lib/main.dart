@@ -5,12 +5,12 @@ import 'package:mobile/pages/checkout_success_page.dart';
 import 'package:mobile/pages/detail_chat_page.dart';
 import 'package:mobile/pages/edit_profile_page.dart';
 import 'package:mobile/pages/home/main_page.dart';
-import 'package:mobile/pages/product_page.dart';
 import 'package:mobile/pages/sign_in_page.dart';
 import 'package:mobile/pages/sign_up_page.dart';
 import 'package:mobile/pages/splash_page.dart';
 import 'package:mobile/providers/auth_provider.dart';
 import 'package:mobile/providers/product_provider.dart';
+import 'package:mobile/providers/wishlist_provider.dart';
 import 'package:provider/provider.dart';
 
 void main () => runApp(const MyApp());
@@ -29,6 +29,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => ProductProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => WishlistProvider(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -39,7 +42,6 @@ class MyApp extends StatelessWidget {
           "/home": (context) => MainPage(),
           '/detail-chat': (context) => DetailChatPage(),
           '/edit-profile': (context) => EditProfilePage(),
-          '/product': (context) => ProductPage(),
           '/cart': (context) => CartPage(),
           '/checkout': (context) => CheckoutPage(),
           '/checkout-success': (context) => CheckoutSuccessPage(),

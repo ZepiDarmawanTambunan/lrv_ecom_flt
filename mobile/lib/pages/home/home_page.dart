@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/models/user_model.dart';
 import 'package:mobile/providers/auth_provider.dart';
+import 'package:mobile/providers/product_provider.dart';
 import 'package:mobile/theme.dart';
 import 'package:mobile/widgets/product_card.dart';
 import 'package:mobile/widgets/product_tile.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -14,6 +17,7 @@ class HomePage extends StatelessWidget {
 
     AuthProvider authProvider = Provider.of<AuthProvider>(context);
     UserModel user = authProvider.user;
+    ProductProvider productProvider = Provider.of<ProductProvider>(context);
     Widget header(){
       return Container(
         margin: EdgeInsets.only(
@@ -39,13 +43,27 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             ),
-            Container(
-              width: 54,
-              height: 54,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(image: NetworkImage(user.profilePhotoUrl,),),
+            CachedNetworkImage(
+              imageUrl: 'https://static.vecteezy.com/system/resources/previews/000/574/512/original/vector-sign-of-user-icon.jpg',
+              cacheManager: CacheManager(
+                Config(
+                  'https://static.vecteezy.com/system/resources/previews/000/574/512/original/vector-sign-of-user-icon.jpg',
+                  stalePeriod: const Duration(days: 7)
+                )
               ),
+              imageBuilder: (context, imageProvider) => Container(
+                width: 54,
+                height: 54,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                    image: imageProvider,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              placeholder: (context, url) => CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Icon(Icons.error),
             ),
           ],
         ),
@@ -170,11 +188,7 @@ class HomePage extends StatelessWidget {
                 width: defaultMargin,
               ),
               Row(
-                children: [
-                  ProductCard(),
-                  ProductCard(),
-                  ProductCard(),
-                ],
+                children: productProvider.products.map((product) => ProductCard(product: product,)).toList(),
               ),
             ],
           ),
@@ -205,11 +219,7 @@ class HomePage extends StatelessWidget {
           top: 14,
         ),
         child: Column(
-          children: [
-            ProductTile(),
-            ProductTile(),
-            ProductTile(),
-          ],
+          children: productProvider.products.map((product) => ProductTile(product: product,)).toList(),
         ),
       );
     }

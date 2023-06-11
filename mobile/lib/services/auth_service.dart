@@ -4,7 +4,8 @@ import 'package:mobile/models/user_model.dart';
 import 'package:http/http.dart' as http;
 
 class AuthService{
-  String baseUrl = 'http://10.0.2.2:8000/api'; // localhost
+  String baseUrl = 'http://10.0.2.2:8000/api'; // localhost emulator
+  // String baseUrl = 'http://192.168.114.97:8000/api'; // localhost ip wifi to hp
 
     Future<UserModel> register({
     required String name, 

@@ -3,6 +3,8 @@ import 'package:mobile/models/user_model.dart';
 import 'package:mobile/providers/auth_provider.dart';
 import 'package:mobile/theme.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 class EditProfilePage extends StatelessWidget {
   const EditProfilePage({super.key});
@@ -109,17 +111,29 @@ class EditProfilePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
+          CachedNetworkImage(
+            imageUrl: 'https://static.vecteezy.com/system/resources/previews/000/574/512/original/vector-sign-of-user-icon.jpg',
+            cacheManager: CacheManager(
+              Config(
+                'https://static.vecteezy.com/system/resources/previews/000/574/512/original/vector-sign-of-user-icon.jpg',
+                stalePeriod: const Duration(days: 7)
+              )
+            ),
+            imageBuilder: (context, imageProvider) => Container(
               width: 100,
               height: 100,
               margin: EdgeInsets.only(top: defaultMargin),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 image: DecorationImage(
-                  fit: BoxFit.fill, //agar buat img yg default kotak jadi masuk bulat
-                  image: NetworkImage(user.profilePhotoUrl))
+                  fit: BoxFit.fill,
+                  image: imageProvider,
+                ),
               ),
-            ), 
+            ),
+            placeholder: (context, url) => CircularProgressIndicator(),
+            errorWidget: (context, url, error) => Icon(Icons.error),
+          ),
             nameInput(),
             usernameInput(),
             emailInput(),

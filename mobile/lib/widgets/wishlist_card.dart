@@ -1,11 +1,22 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile/models/product_model.dart';
+import 'package:mobile/providers/wishlist_provider.dart';
 import 'package:mobile/theme.dart';
+import 'package:provider/provider.dart';
+
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 class WishlistCard extends StatelessWidget {
-  const WishlistCard({super.key});
+  WishlistCard({super.key, required this.product});
+
+  final ProductModel product;
 
   @override
   Widget build(BuildContext context) {
+
+    WishlistProvider wishlistProvider = Provider.of<WishlistProvider>(context);
+
     return Container(
       margin: EdgeInsets.only(
         top: 20,
@@ -24,7 +35,18 @@ class WishlistCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Image.asset('assets/image_shoes.png', width: 60,),
+            child: CachedNetworkImage(
+              imageUrl: product.galleries[0].url,
+              cacheManager: CacheManager(
+                Config(
+                  product.galleries[0].url,
+                  stalePeriod: const Duration(days: 7)
+                )
+              ),
+              width: 60,
+              placeholder: (context, url) => CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Icon(Icons.error),
+            ),
           ),
           SizedBox(
             width: 12,
@@ -33,14 +55,18 @@ class WishlistCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Terrex Urban Low", style: primaryTextStyle.copyWith(
+                Text(product.name, style: primaryTextStyle.copyWith(
                   fontWeight: semiBold,
                 ),),
-                Text("\$143,98", style: priceTextStyle,),
+                Text("\$${product.price}", style: priceTextStyle,),
               ],
             ),
           ),
-          Image.asset('assets/button_wishlist_blue.png', width: 34,),
+          GestureDetector(
+            onTap: (){
+              wishlistProvider.setProduct(product);
+            },
+            child: Image.asset('assets/button_wishlist_blue.png', width: 34,)),
         ],
       ),
     );

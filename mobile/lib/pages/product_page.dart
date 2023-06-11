@@ -1,32 +1,30 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:mobile/models/product_model.dart';
+import 'package:mobile/providers/product_provider.dart';
+import 'package:mobile/providers/wishlist_provider.dart';
 import 'package:mobile/theme.dart';
+import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ProductPage extends StatefulWidget {
-  ProductPage({super.key});
+  final ProductModel product;
+  ProductPage({super.key, required this.product});
 
   @override
   State<ProductPage> createState() => _ProductPageState();
 }
 
 class _ProductPageState extends State<ProductPage> {
-  final List images = ['assets/image_shoes.png', 'assets/image_shoes.png','assets/image_shoes.png'];
-  final List familiarShoes = [
-    'assets/image_shoes.png', 
-    'assets/image_shoes.png',
-    'assets/image_shoes.png',
-    'assets/image_shoes.png', 
-    'assets/image_shoes.png',
-    'assets/image_shoes.png',
-    'assets/image_shoes.png', 
-    'assets/image_shoes.png',
-    'assets/image_shoes.png',
-    ];
 
   int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    
+  ProductProvider productProvider = Provider.of<ProductProvider>(context); //familiar image from same category
+  WishlistProvider wishlistProvider = Provider.of<WishlistProvider>(context);
 
   Widget indicator(int index){
     return Container(
@@ -64,18 +62,27 @@ class _ProductPageState extends State<ProductPage> {
           ),
         ),
         CarouselSlider(
-          items: images.map((image) => Image.asset(image, 
+          items: widget.product.galleries.map((image) => CachedNetworkImage(
+          cacheManager: CacheManager(
+            Config(
+              image.url,
+              stalePeriod: const Duration(days: 7)
+            )
+          ),
+            imageUrl: image.url,
             width: MediaQuery.of(context).size.width,
             height: 310,
             fit: BoxFit.cover,
-            )).toList(), 
+            placeholder: (context, url) => CircularProgressIndicator(),
+            errorWidget: (context, url, error) => Icon(Icons.error),
+          )).toList(),
           options: CarouselOptions(
             initialPage: 0,
-            onPageChanged: (index, reason){
+            onPageChanged: (index, reason) {
               setState(() {
                 currentIndex = index;
               });
-            }
+            },
           ),
           ),
           SizedBox(
@@ -83,7 +90,7 @@ class _ProductPageState extends State<ProductPage> {
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: images.map((e) {
+            children: widget.product.galleries.map((e) {
               index++;
               return indicator(index);
             }).toList(),
@@ -93,15 +100,25 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   Widget familiarShoesCard(String imageUrl){
-    return Container(
+    return CachedNetworkImage(
+      imageUrl: imageUrl,
       width: 54,
       height: 54,
-      margin: EdgeInsets.only(
-        right: 16,
-      ),
-      decoration: BoxDecoration(
-        image: DecorationImage(image: AssetImage(imageUrl)),
-        borderRadius: BorderRadius.circular(6),
+      placeholder: (context, url) => CircularProgressIndicator(),
+      errorWidget: (context, url, error) => Icon(Icons.error),
+      imageBuilder: (context, imageProvider) => Container(
+        width: 54,
+        height: 54,
+        margin: EdgeInsets.only(
+          right: 16,
+        ),
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: imageProvider,
+            fit: BoxFit.cover,
+          ),
+          borderRadius: BorderRadius.circular(6),
+        ),
       ),
     );
   }
@@ -132,16 +149,40 @@ class _ProductPageState extends State<ProductPage> {
                 Expanded(child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('TERREX URBAN LOW', style: primaryTextStyle.copyWith(
+                    Text(widget.product.name, style: primaryTextStyle.copyWith(
                       fontSize: 18,
                       fontWeight: semiBold,
                     ),),
-                    Text('Hiking', style: secondaryTextStyle.copyWith(
+                    Text(widget.product.category != null ? widget.product.category!.name : 'none', style: secondaryTextStyle.copyWith(
                       fontSize: 12,
                     ),),
                   ],
                 )),
-                Image.asset('assets/button_wishlist.png', width: 46,),
+                GestureDetector(
+                  onTap: (){
+
+                    wishlistProvider.setProduct(widget.product);
+
+                    if(wishlistProvider.isWishlist(widget.product)){
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: secondaryColor,
+                          content: Text('Has been added to the wishlist', textAlign: TextAlign.center,),
+                        ),
+                      );
+                    }else{
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: alertColor,
+                          content: Text('Has been removed to the wishlist', textAlign: TextAlign.center,),
+                        ),
+                      );
+                    }
+                  },
+                  child: Image.asset(
+                    wishlistProvider.isWishlist(widget.product)
+                    ? 'assets/button_wishlist_blue.png'
+                    : 'assets/button_wishlist.png', width: 46,)),
               ],
             ),
           ),
@@ -162,7 +203,7 @@ class _ProductPageState extends State<ProductPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Price starts from', style: primaryTextStyle,),
-                Text('\$143,98', style: priceTextStyle.copyWith(
+                Text('\$${widget.product.price}', style: priceTextStyle.copyWith(
                   fontSize: 16,
                   fontWeight: semiBold,
                 ),)
@@ -188,7 +229,7 @@ class _ProductPageState extends State<ProductPage> {
                   height: 12,
                 ),
                 Text(
-                  'Generate Lorem Ipsum placeholder text. Select the number of characters, words, sentences or paragraphs, and hit generate',
+                  widget.product.description,
                   style: subtitleTextStyle.copyWith(
                     fontWeight: light,
                   ),
@@ -220,13 +261,20 @@ class _ProductPageState extends State<ProductPage> {
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
-                    children: familiarShoes.map((image) {
+                    children: productProvider.products.map((item) {
                       index++;
-                      return Container(
-                        margin: EdgeInsets.only(
-                          left: index == 0 ? defaultMargin : 0,
+                      return GestureDetector(
+                        onTap: (){
+                          Navigator.pushReplacement(context, MaterialPageRoute(
+                            builder: (context) => ProductPage(product: item)));
+                        },
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.3, // Menambahkan lebar
+                          margin: EdgeInsets.only(
+                            left: index == 0 ? defaultMargin : 0,
+                          ),
+                          child: familiarShoesCard(item.galleries[0].url),
                         ),
-                        child: familiarShoesCard(image),
                       );
                     }, ).toList(),
                   ),

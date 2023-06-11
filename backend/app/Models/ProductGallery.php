@@ -22,10 +22,10 @@ class ProductGallery extends Model
         'url',
     ];
 
-    public function url(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => config('app.url').Storage::url($value),
-        );
-    }
+    // public function url(): Attribute
+    // {
+    //     return Attribute::make(
+    //         get: fn ($value) => config('app.url').Storage::url($value),
+    //     );
+    // }
 }

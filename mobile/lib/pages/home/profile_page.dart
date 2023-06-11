@@ -3,6 +3,8 @@ import 'package:mobile/models/user_model.dart';
 import 'package:mobile/providers/auth_provider.dart';
 import 'package:mobile/theme.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -32,8 +34,27 @@ class ProfilePage extends StatelessWidget {
           padding: EdgeInsets.all(defaultMargin),
           child: Row(
             children: [
-              ClipOval(
-                child: Image.network(user.profilePhotoUrl, width: 64,),
+              CachedNetworkImage(
+                imageUrl: 'https://static.vecteezy.com/system/resources/previews/000/574/512/original/vector-sign-of-user-icon.jpg',
+                cacheManager: CacheManager(
+                  Config(
+                    'https://static.vecteezy.com/system/resources/previews/000/574/512/original/vector-sign-of-user-icon.jpg',
+                    stalePeriod: const Duration(days: 7)
+                  )
+                ),
+                imageBuilder: (context, imageProvider) => Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      image: imageProvider,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                placeholder: (context, url) => CircularProgressIndicator(),
+                errorWidget: (context, url, error) => Icon(Icons.error),
               ),
               SizedBox(width: 16,),
               Expanded(child: Column(
