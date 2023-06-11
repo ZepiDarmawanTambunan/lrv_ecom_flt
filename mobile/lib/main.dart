@@ -9,6 +9,7 @@ import 'package:mobile/pages/sign_in_page.dart';
 import 'package:mobile/pages/sign_up_page.dart';
 import 'package:mobile/pages/splash_page.dart';
 import 'package:mobile/providers/auth_provider.dart';
+import 'package:mobile/providers/cart_provider.dart';
 import 'package:mobile/providers/product_provider.dart';
 import 'package:mobile/providers/wishlist_provider.dart';
 import 'package:provider/provider.dart';
@@ -31,6 +32,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => WishlistProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => CartProvider(),
         ),
       ],
       child: MaterialApp(

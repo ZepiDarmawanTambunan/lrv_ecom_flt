@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/providers/cart_provider.dart';
 import 'package:mobile/theme.dart';
 import 'package:mobile/widgets/cart_card.dart';
+import 'package:provider/provider.dart';
 
 class CartPage extends StatelessWidget {
   const CartPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+  CartProvider cartProvider = Provider.of<CartProvider>(context);
     
     AppBar header(){
       return AppBar(
@@ -55,9 +58,7 @@ class CartPage extends StatelessWidget {
         padding: EdgeInsets.symmetric(
           horizontal: defaultMargin
         ),
-        children: [
-          CartCard(),
-        ],
+        children: cartProvider.carts.map((cart) => CartCard(cart: cart)).toList(),
       );
     }
 
@@ -74,7 +75,7 @@ class CartPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('Subtotal', style: primaryTextStyle,),
-                  Text('\$287,98', style: priceTextStyle.copyWith(
+                  Text('\$${cartProvider.totalPrice()}', style: priceTextStyle.copyWith(
                     fontSize: 16,
                     fontWeight: semiBold,
                   ),),
@@ -127,8 +128,8 @@ class CartPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: backgroundColor3,
       appBar: header(),
-      body: content(),
-      bottomNavigationBar: customBottomNav(),
+      body: cartProvider.carts.length == 0 ? emptyCart() : content(),
+      bottomNavigationBar: cartProvider.carts.length == 0 ? SizedBox() : customBottomNav(),
     );
   }
 }
