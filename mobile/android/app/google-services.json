@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "670132713849",
+    "project_id": "lrv-ecom-flt",
+    "storage_bucket": "lrv-ecom-flt.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:670132713849:android:5a1a00747f5e623bb7d7a8",
+        "android_client_info": {
+          "package_name": "com.lrvecomflt.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "670132713849-nhc1h7c69ptkvco94fha5hs0kl8hfou6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXOgME228OwXV0ocTbWU_DI1Xu7a7_hyA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "670132713849-nhc1h7c69ptkvco94fha5hs0kl8hfou6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
