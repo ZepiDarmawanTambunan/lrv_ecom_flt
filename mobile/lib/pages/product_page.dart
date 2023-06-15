@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:mobile/models/product_model.dart';
+import 'package:mobile/pages/detail_chat_page.dart';
 import 'package:mobile/providers/cart_provider.dart';
 import 'package:mobile/providers/product_provider.dart';
 import 'package:mobile/providers/wishlist_provider.dart';
@@ -370,11 +371,16 @@ class _ProductPageState extends State<ProductPage> {
             margin: EdgeInsets.all(defaultMargin),
             child: Row(
               children: [
-                Container(
-                  width: 54,
-                  height: 54,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(image: AssetImage('assets/button_chat.png'),),
+                GestureDetector(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => DetailChatPage(product: widget.product)));
+                  },
+                  child: Container(
+                    width: 54,
+                    height: 54,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(image: AssetImage('assets/button_chat.png'),),
+                    ),
                   ),
                 ),
                 SizedBox(width: 16,),

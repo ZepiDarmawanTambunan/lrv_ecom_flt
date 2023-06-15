@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/models/gallery_model.dart';
+import 'package:mobile/models/product_model.dart';
+import 'package:mobile/pages/detail_chat_page.dart';
 import 'package:mobile/theme.dart';
 
 class ChatTile extends StatelessWidget {
@@ -8,7 +11,7 @@ class ChatTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-        Navigator.pushNamed(context, '/detail-chat');
+        Navigator.push(context, MaterialPageRoute(builder: (context) => DetailChatPage(product: UninitializedProductModel(id: 999, name: 'dummy', price: 10.0, description: 'dummy', galleries: [GalleryModel(id: 999, url: 'https://www.footlocker.id/media/catalog/product/cache/e81e4f913a1cad058ef66fea8e95c839/0/1/01-NIKE-F34KBNIK5-NIKDQ6513060-Black.jpg')]))));
       },
       child: Container(
       margin: EdgeInsets.only(top: 33),

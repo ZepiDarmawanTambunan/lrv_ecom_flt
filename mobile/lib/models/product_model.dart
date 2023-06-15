@@ -54,3 +54,8 @@ class ProductModel{
     };
   }
 }
+
+class UninitializedProductModel extends ProductModel{
+  UninitializedProductModel({required super.id, required super.name, required super.price, required super.description, required super.galleries});
+  
+}

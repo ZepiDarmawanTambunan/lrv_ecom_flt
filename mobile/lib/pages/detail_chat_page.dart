@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/models/gallery_model.dart';
+import 'package:mobile/models/product_model.dart';
 import 'package:mobile/theme.dart';
 import 'package:mobile/widgets/chat_bubble.dart';
 
-class DetailChatPage extends StatelessWidget {
-  const DetailChatPage({super.key});
+class DetailChatPage extends StatefulWidget {
+  ProductModel product;
+  DetailChatPage({super.key, required this.product});
 
   @override
+  State<DetailChatPage> createState() => _DetailChatPageState();
+}
+
+class _DetailChatPageState extends State<DetailChatPage> {
+  @override
   Widget build(BuildContext context) {
-    
 
     PreferredSizeWidget header() {
       return PreferredSize(
@@ -67,20 +74,26 @@ class DetailChatPage extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: Image.asset('assets/image_shoes.png', width: 54,)),
+              child: Image.network(widget.product.galleries[0].url, width: 54,)),
             SizedBox(width: 10,),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("COURT VISIO...", style: primaryTextStyle, overflow: TextOverflow.ellipsis,),
+                  Text(widget.product.name, style: primaryTextStyle, overflow: TextOverflow.ellipsis,),
                   SizedBox(height: 2,),
-                  Text("\$57.15", style: priceTextStyle.copyWith(fontWeight: medium),),
+                  Text("\$${widget.product.price}", style: priceTextStyle.copyWith(fontWeight: medium),),
                 ],
               ),
             ),
-            Image.asset('assets/button_close.png', width: 22,),
+            GestureDetector(
+              onTap: (){
+                setState(() {
+                  widget.product = UninitializedProductModel(id: 999, name: 'dummy', price: 10.0, description: 'dummy', galleries: [GalleryModel(id: 999, url: 'https://www.footlocker.id/media/catalog/product/cache/e81e4f913a1cad058ef66fea8e95c839/0/1/01-NIKE-F34KBNIK5-NIKDQ6513060-Black.jpg')]);
+                });
+              },
+              child: Image.asset('assets/button_close.png', width: 22,)),
           ],
         ),
       );
@@ -93,7 +106,7 @@ class DetailChatPage extends StatelessWidget {
           mainAxisSize: MainAxisSize.min, //Column full height to fit height content
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            productPreview(),
+            widget.product is UninitializedProductModel ? SizedBox() : productPreview(),
             Row(
               children: [
                 Expanded(

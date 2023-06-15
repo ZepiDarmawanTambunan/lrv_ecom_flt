@@ -113,12 +113,18 @@ class _MainPageState extends State<MainPage> {
       }
     }
 
-    return Scaffold(
-      backgroundColor: currentIndex == 0 ? backgroundColor1 : backgroundColor3,
-      floatingActionButton: cartButton(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: customBottomNav(),
-      body: body(),
+    return WillPopScope(
+      onWillPop: () async {
+        // Mencegah penekanan tombol kembali dengan mengembalikan nilai false
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: currentIndex == 0 ? backgroundColor1 : backgroundColor3,
+        floatingActionButton: cartButton(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        bottomNavigationBar: customBottomNav(),
+        body: body(),
+      ),
     );
   }
 }
