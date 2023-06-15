@@ -1,0 +1,1 @@
+firebase -> firestore database -> production -> ok -> rules -> allow read, write: if true;

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/models/gallery_model.dart';
 import 'package:mobile/models/product_model.dart';
+import 'package:mobile/providers/auth_provider.dart';
+import 'package:mobile/services/message_service.dart';
 import 'package:mobile/theme.dart';
 import 'package:mobile/widgets/chat_bubble.dart';
+import 'package:provider/provider.dart';
 
 class DetailChatPage extends StatefulWidget {
   ProductModel product;
@@ -13,8 +16,20 @@ class DetailChatPage extends StatefulWidget {
 }
 
 class _DetailChatPageState extends State<DetailChatPage> {
+  TextEditingController messageController = TextEditingController(text: '');
+
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+
+    handleAddMessage()async{
+      await MessageService().addMessage(user: authProvider.user, 
+      isFromUser: true, message: messageController.text, product: widget.product);
+      setState(() {
+        widget.product = UninitializedProductModel(id: 999, name: 'dummy', price: 10.0, description: 'dummy', galleries: [GalleryModel(id: 999, url: 'https://www.footlocker.id/media/catalog/product/cache/e81e4f913a1cad058ef66fea8e95c839/0/1/01-NIKE-F34KBNIK5-NIKDQ6513060-Black.jpg')]);
+        messageController.text = '';
+      });
+    }
 
     PreferredSizeWidget header() {
       return PreferredSize(
@@ -119,6 +134,8 @@ class _DetailChatPageState extends State<DetailChatPage> {
                     ),
                     child: Center(
                       child: TextFormField(
+                        controller: messageController,
+                        style: primaryTextStyle,
                         decoration: InputDecoration.collapsed(
                           hintText: "Type Message...",
                           hintStyle: subtitleTextStyle,
@@ -128,7 +145,9 @@ class _DetailChatPageState extends State<DetailChatPage> {
                   ),
                 ),
                 SizedBox(width: 20),
-                Image.asset('assets/button_send.png', width: 45,),
+                GestureDetector(
+                  onTap: handleAddMessage,
+                  child: Image.asset('assets/button_send.png', width: 45,)),
               ],
             ),
           ],
