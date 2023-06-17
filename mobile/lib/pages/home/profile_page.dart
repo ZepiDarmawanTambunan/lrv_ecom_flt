@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/models/user_model.dart';
 import 'package:mobile/providers/auth_provider.dart';
+import 'package:mobile/providers/page_provider.dart';
 import 'package:mobile/theme.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -13,10 +14,12 @@ class ProfilePage extends StatelessWidget {
 
     
     AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    PageProvider pageProvider = Provider.of<PageProvider>(context);
     UserModel user = authProvider.user;
 
     handleLogout() async{
       if(await authProvider.logout()){
+          pageProvider.currentIndex = 0;
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             backgroundColor: primaryColor,

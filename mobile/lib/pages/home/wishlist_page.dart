@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/providers/page_provider.dart';
 import 'package:mobile/providers/wishlist_provider.dart';
 import 'package:mobile/theme.dart';
 import 'package:mobile/widgets/wishlist_card.dart';
@@ -11,6 +12,7 @@ class WishlistPage extends StatelessWidget {
   Widget build(BuildContext context) {
 
     WishlistProvider wishlistProvider = Provider.of<WishlistProvider>(context);
+    PageProvider pageProvider = Provider.of<PageProvider>(context);
 
     Widget header(){
       return AppBar(
@@ -58,6 +60,7 @@ class WishlistPage extends StatelessWidget {
                 height: 44,
                 child: TextButton(
                   onPressed: () {
+                    pageProvider.currentIndex = 0;
                   },
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.symmetric(

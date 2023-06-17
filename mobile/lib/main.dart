@@ -10,6 +10,7 @@ import 'package:mobile/pages/sign_up_page.dart';
 import 'package:mobile/pages/splash_page.dart';
 import 'package:mobile/providers/auth_provider.dart';
 import 'package:mobile/providers/cart_provider.dart';
+import 'package:mobile/providers/page_provider.dart';
 import 'package:mobile/providers/product_provider.dart';
 import 'package:mobile/providers/transaction_provider.dart';
 import 'package:mobile/providers/wishlist_provider.dart';
@@ -45,6 +46,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => TransactionProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => PageProvider(),
         ),
       ],
       child: MaterialApp(

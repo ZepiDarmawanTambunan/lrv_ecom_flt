@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/models/gallery_model.dart';
+import 'package:mobile/models/message_model.dart';
 import 'package:mobile/models/product_model.dart';
 import 'package:mobile/pages/detail_chat_page.dart';
 import 'package:mobile/theme.dart';
 
 class ChatTile extends StatelessWidget {
-  const ChatTile({super.key});
+  final MessageModel message;
+  ChatTile({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +32,7 @@ class ChatTile extends StatelessWidget {
                       fontSize: 15,
                     ),
                     ),
-                    Text("Good night, This item is on... Good night, this item is ", 
+                    Text(message.message, 
                     style: secondaryTextStyle.copyWith(
                       fontWeight: light,
                     ),

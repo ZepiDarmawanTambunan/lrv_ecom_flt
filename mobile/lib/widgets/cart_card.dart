@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/models/cart_model.dart';
 import 'package:mobile/providers/cart_provider.dart';
@@ -34,7 +35,7 @@ class CartCard extends StatelessWidget {
                 height: 60,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  image: DecorationImage(image: NetworkImage(cart.product.galleries[0].url),),
+                  image: DecorationImage(image:CachedNetworkImageProvider(cart.product.galleries[0].url),),
                 ),
               ),
               SizedBox(
@@ -55,7 +56,7 @@ class CartCard extends StatelessWidget {
                     onTap: (){cartProvider.addQuantity(cart.id);},
                     child: Image.asset('assets/button_add.png', width: 16,)),
                   SizedBox(height: 2,),
-                  Text('2', style: primaryTextStyle.copyWith(
+                  Text("${cart.quantity}", style: primaryTextStyle.copyWith(
                     fontWeight: medium,
                   ),),
                   SizedBox(height: 2,),

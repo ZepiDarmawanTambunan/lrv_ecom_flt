@@ -29,10 +29,13 @@ class CartProvider with ChangeNotifier{
 
   addQuantity(int id){
     _carts[id].quantity++;
+    print(_carts[0].quantity.toString());
+    print(id);
+    notifyListeners();
   }
 
   reduceQuantity(int id){
-    _carts[id].quantity++;
+    _carts[id].quantity--;
     if(_carts[id].quantity == 0){
       _carts.removeAt(id);
     }
@@ -59,7 +62,7 @@ class CartProvider with ChangeNotifier{
     if(_carts.indexWhere((element) => element.id == product.id) == -1){
       return false;
     }else{
-      return false;
+      return true;
     }
   }
 }

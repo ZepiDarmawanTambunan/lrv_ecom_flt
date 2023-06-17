@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/models/message_model.dart';
+import 'package:mobile/providers/auth_provider.dart';
+import 'package:mobile/providers/page_provider.dart';
+import 'package:mobile/services/message_service.dart';
 import 'package:mobile/theme.dart';
 import 'package:mobile/widgets/chat_tile.dart';
+import 'package:provider/provider.dart';
 
 class ChatPage extends StatelessWidget {
   const ChatPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    PageProvider pageProvider = Provider.of<PageProvider>(context);
 
     Widget header(){
       return AppBar(
@@ -44,7 +52,9 @@ class ChatPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                onPressed: (){}, 
+                onPressed: (){
+                  pageProvider.currentIndex = 0;
+                }, 
                 child: Text("Explore Store", style: primaryTextStyle.copyWith(fontSize: 16, fontWeight: medium,),),),
             ),
             
@@ -54,20 +64,31 @@ class ChatPage extends StatelessWidget {
     }
 
     Widget content(){
-      return Expanded(child: Container(
-        width: double.infinity,
-        color: backgroundColor3,
-        child: ListView(
-          padding: EdgeInsets.symmetric(
-            horizontal: defaultMargin,
-          ),
-          children: [
-            ChatTile(),
-            ChatTile(),
-            ChatTile(),
-          ],
-        ),
-      ));
+      return StreamBuilder<List<MessageModel>>(
+        stream: MessageService().getMessagesByUserId(userId: authProvider.user.id),
+        builder: (context, snapshot) {
+          if(snapshot.hasData){
+            if(snapshot.data!.length == 0){
+              return emptyChat();
+            }
+
+              return Expanded(child: Container(
+              width: double.infinity,
+              color: backgroundColor3,
+              child: ListView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: defaultMargin,
+                ),
+                children: [
+                  ChatTile(message: snapshot.data![snapshot.data!.length - 1]),
+                ],
+              ),
+            ));
+          }else{
+            return emptyChat();
+          }
+        }
+      );
     }
 
     return Column(

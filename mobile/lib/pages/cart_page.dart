@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/providers/cart_provider.dart';
+import 'package:mobile/providers/page_provider.dart';
 import 'package:mobile/theme.dart';
 import 'package:mobile/widgets/cart_card.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +11,7 @@ class CartPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
   CartProvider cartProvider = Provider.of<CartProvider>(context);
+  PageProvider pageProvider = Provider.of<PageProvider>(context);
     
     AppBar header(){
       return AppBar(
@@ -42,6 +44,7 @@ class CartPage extends StatelessWidget {
                   ),
                 ),
                 onPressed: (){
+                  pageProvider.currentIndex = 0;
                   Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
                 }, child: Text('Explore Store', style: primaryTextStyle.copyWith(
                   fontSize: 16,

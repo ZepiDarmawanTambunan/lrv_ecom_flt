@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/models/cart_model.dart';
 import 'package:mobile/theme.dart';
@@ -26,7 +27,11 @@ class CheckoutCard extends StatelessWidget {
             height: 60,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              image: DecorationImage(image: NetworkImage(cart.product.galleries[0].url),),            ),
+              image: DecorationImage(
+                  image: CachedNetworkImageProvider(cart.product.galleries[0].url),
+                  onError: (_, __) => Icon(Icons.error),
+                ),
+              ),
           ),
           SizedBox(width: 12,),
           Expanded(

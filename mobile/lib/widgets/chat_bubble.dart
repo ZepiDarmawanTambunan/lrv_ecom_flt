@@ -1,14 +1,16 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mobile/models/product_model.dart';
 import 'package:mobile/theme.dart';
 
 class ChatBubble extends StatelessWidget {
 
   final String? text;
   final bool? isSender;
-  final bool hasProduct;
+  final ProductModel product;
 
-  ChatBubble({Key? key, this.text='', this.isSender=false, this.hasProduct = false}): super(key: key);
+  ChatBubble({Key? key, this.text='', this.isSender=false, required this.product}): super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,15 +35,20 @@ class ChatBubble extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.asset('assets/image_shoes.png', width: 70,),
+                  child: CachedNetworkImage(
+                    imageUrl: product.galleries[0].url,
+                    width: 70,
+                    placeholder: (context, url) => CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                  ),
                 ),
                 SizedBox(width: 8,),
                 Expanded(child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("COURT VISION 2.0 SHOES", style: primaryTextStyle,),
+                    Text(product.name, style: primaryTextStyle,),
                     SizedBox(height: 4,),
-                    Text('\$57,15', style: priceTextStyle.copyWith(fontWeight: medium),),
+                    Text('\$${product.price}', style: priceTextStyle.copyWith(fontWeight: medium),),
                   ],
                 ),),
               ],
@@ -85,7 +92,7 @@ class ChatBubble extends StatelessWidget {
       child: Column(
         crossAxisAlignment: isSender! ? CrossAxisAlignment.end : CrossAxisAlignment.start ,
         children: [
-          hasProduct ? productPreview() : SizedBox(),
+          product is UninitializedProductModel ? SizedBox() : productPreview(),
           Row(
             mainAxisAlignment: isSender! ? MainAxisAlignment.end : MainAxisAlignment.start,
             children: [

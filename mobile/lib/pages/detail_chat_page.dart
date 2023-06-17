@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/models/gallery_model.dart';
+import 'package:mobile/models/message_model.dart';
 import 'package:mobile/models/product_model.dart';
 import 'package:mobile/providers/auth_provider.dart';
 import 'package:mobile/services/message_service.dart';
@@ -89,7 +91,11 @@ class _DetailChatPageState extends State<DetailChatPage> {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: Image.network(widget.product.galleries[0].url, width: 54,)),
+              child: CachedNetworkImage(
+                imageUrl: widget.product.galleries[0].url,
+                width: 54,
+                errorWidget: (context, url, error) => Icon(Icons.error),
+              ),),
             SizedBox(width: 10,),
             Expanded(
               child: Column(
@@ -118,7 +124,7 @@ class _DetailChatPageState extends State<DetailChatPage> {
       return Container(
         margin: EdgeInsets.all(20),
         child: Column(
-          mainAxisSize: MainAxisSize.min, //Column full height to fit height content
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             widget.product is UninitializedProductModel ? SizedBox() : productPreview(),
@@ -156,22 +162,41 @@ class _DetailChatPageState extends State<DetailChatPage> {
     }
 
     Widget content(){
-      return ListView(
-        padding: EdgeInsets.symmetric(
-          horizontal: defaultMargin,
-        ),
-        children: [
-          ChatBubble(isSender: true, text: "Hi, This item is still available?", hasProduct: true),
-          ChatBubble(isSender: false, text: "Good night, This item is only available in size 42 and "),
-          ChatBubble(isSender: true, text: "Hi, This item is still available?"),
-        ],
+      return StreamBuilder<List<MessageModel>>(
+        stream: MessageService().getMessagesByUserId(userId: authProvider.user.id),
+        builder: (context, snapshot) {
+
+          if(snapshot.hasData){
+            return ListView(
+              children: [
+                Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: defaultMargin,
+              ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: snapshot.data!.map((MessageModel message) => ChatBubble(
+                  isSender: message.isFromUser,
+                  text: message.message,
+                  product: message.product,
+                              )).toList(),
+                  ),
+                ),
+              chatInput(),
+              ],
+            );
+          }else{
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        }
       );
     }
 
     return Scaffold(
       backgroundColor: backgroundColor3,
       appBar: header(),
-      bottomNavigationBar: chatInput(),
       body: content(),
     );
   }
