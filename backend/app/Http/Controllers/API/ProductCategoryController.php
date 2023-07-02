@@ -42,4 +42,22 @@ class ProductCategoryController extends Controller
             return ResponseFormatter::error(null, 'Data category product gagal diambil', 404);
         }
     }
+
+    public function store(Request $request){
+        try {   
+            $request->validate([
+                'name' => 'required|string|unique:product_categories,name',
+            ]);
+
+            $productCategory = ProductCategory::create([
+                'name' => $request->name,
+            ]);
+            return ResponseFormatter::success($productCategory, 'Tambah Category berhasil');
+        } catch (\Throwable $error) {
+            return ResponseFormatter::error([
+                'message' => 'Something went wrong',
+                'error' => $error->getMessage(),
+            ],'Gagal', 500);
+        }
+    }
 }

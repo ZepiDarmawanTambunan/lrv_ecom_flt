@@ -4,8 +4,9 @@ namespace App\Http\Controllers\API;
 
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
-
+use App\Models\ProductCategory;
 use App\Models\Product;
+use App\Models\ProductGallery;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -62,6 +63,44 @@ class ProductController extends Controller
             return ResponseFormatter::success($product->paginate($limit), 'Data produk berhasil diambil');
         }else{
             return ResponseFormatter::error(null, 'Data produk gagal diambil', 404);
+        }
+    }
+
+    public function store(Request $request){
+        try {
+            $request->validate([
+                'name' => 'required|string|unique:product_categories,name',
+                'description' => 'required|string|min:3',
+                'price' => 'required|numeric',
+                'categories_id' => 'required|integer|exists:product_categories,id',
+                'tags' => 'required|string',
+                'images.*' => 'image|mimes:jpeg,png,jpg'
+            ]);
+
+            $product = Product::create([
+                'name' => $request->name,
+                'description' => $request->description,
+                'price' => $request->price,
+                'categories_id' => $request->categories_id,
+                'tags' => $request->tags,
+            ]);
+
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    $path = $image->store('product_images', 'public');
+                    ProductGallery::create([
+                        'products_id' => $product->id,
+                        'url' => $path,
+                    ]);
+                }
+            }
+
+            return ResponseFormatter::success($product, 'Tambah Category berhasil');
+        } catch (\Throwable $error) {
+            return ResponseFormatter::error([
+                'message' => 'Something went wrong',
+                'error' => $error->getMessage(),
+            ],'Gagal', 500);
         }
     }
 }

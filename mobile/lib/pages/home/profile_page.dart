@@ -11,7 +11,6 @@ class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   Widget header(BuildContext context){
-
     
     AuthProvider authProvider = Provider.of<AuthProvider>(context);
     PageProvider pageProvider = Provider.of<PageProvider>(context);
@@ -129,6 +128,16 @@ class ProfilePage extends StatelessWidget {
               child: menuItem('Edit Profile')),
             menuItem('Your Orders'),
             menuItem('Help'),
+            SizedBox(height: 20,),
+            Text("Admin", style: primaryTextStyle.copyWith(
+              fontSize: 16,
+              fontWeight: semiBold,
+            ),),
+            GestureDetector(
+              onTap: (){
+                Navigator.pushNamed(context, '/add-product');
+              },
+              child: menuItem('Add Product')),
             SizedBox(height: 30,),
             Text("General", style: primaryTextStyle.copyWith(
               fontSize: 16,
