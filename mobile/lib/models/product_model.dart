@@ -28,7 +28,7 @@ class ProductModel{
     var data =  ProductModel(
       id: json['id'], 
       name: json['name'], 
-      price: json['price'], 
+      price: json['price'] is int ? json['price'] : num.parse(json['price']), 
       description: json['description'], 
       tags: json['tags'] ?? null, 
       category: json['category'] != null ? CategoryModel.fromJson(json['category']) : null, 

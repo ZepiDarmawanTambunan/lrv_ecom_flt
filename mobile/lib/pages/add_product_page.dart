@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/models/category_model.dart';
+import 'package:mobile/models/product_model.dart';
 import 'package:mobile/providers/category_provider.dart';
 import 'package:mobile/providers/image_product_provider.dart';
 import 'package:mobile/theme.dart';
@@ -41,7 +41,6 @@ class _AddProductPageState extends State<AddProductPage> {
     print('build');
     ImageProductProvider imageProductProvider = Provider.of<ImageProductProvider>(context, listen: false);
     CategoryProvider categoryProvider = Provider.of<CategoryProvider>(context, listen: false);
-
     AppBar header(){
       return AppBar(
         leading: IconButton(onPressed: (){
@@ -127,13 +126,34 @@ class _AddProductPageState extends State<AddProductPage> {
         SizedBox(width: 20,),
         ElevatedButton(onPressed: (){
           imageProductProvider.uploadImage(
+            context: context,
             name: nameController.text,
             description: descController.text,
             price: priceController.text,
             tags: tagsController.text,
             categoriesId: categoryProvider.selectedCategory,
             listImagePath: imageProductProvider.listImagePath
-          );
+          ).then((value){
+            if(value is String){
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                backgroundColor: Colors.greenAccent,
+                content: Text("$value berhasil ditambahkan", textAlign: TextAlign.center,),),
+              );
+              nameController.clear();
+              descController.clear();
+              tagsController.clear();
+              priceController.clear();
+              categoryProvider.selectedCategory = 1;
+              categoryProvider.categories = [];
+              imageProductProvider.resetImageProvider();
+              Navigator.pop(context);
+            }
+          }).catchError((err){
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: alertColor,
+              content: Text("${err}", textAlign: TextAlign.center,),),
+            );
+          });
         }, child: Text('Submit'),),
         ],
       );
@@ -158,6 +178,7 @@ class _AddProductPageState extends State<AddProductPage> {
                   return value.categories.length > 0 ? dropDownCategories(value) : CircularProgressIndicator();
                 }
               ),
+              SizedBox(height: 30,),
               btnUploadAndSubmit(),
             ],
           ),

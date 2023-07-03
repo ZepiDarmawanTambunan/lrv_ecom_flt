@@ -104,6 +104,8 @@ class ProfilePage extends StatelessWidget {
   }
 
   Widget content(BuildContext context){
+    
+    PageProvider pageProvider = Provider.of<PageProvider>(context);
     return Expanded(
       child: Container(
         width: double.infinity,
@@ -135,6 +137,7 @@ class ProfilePage extends StatelessWidget {
             ),),
             GestureDetector(
               onTap: (){
+                pageProvider.currentIndex = 0;
                 Navigator.pushNamed(context, '/add-product');
               },
               child: menuItem('Add Product')),

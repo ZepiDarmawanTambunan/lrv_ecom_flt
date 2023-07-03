@@ -29,8 +29,8 @@ class CartProvider with ChangeNotifier{
 
   addQuantity(int id){
     _carts[id].quantity++;
-    print(_carts[0].quantity.toString());
-    print(id);
+    // print(_carts[0].quantity.toString());
+    // print(id);
     notifyListeners();
   }
 

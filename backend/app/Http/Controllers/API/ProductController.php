@@ -85,16 +85,20 @@ class ProductController extends Controller
                 'tags' => $request->tags,
             ]);
 
+            $productGalleries = [];
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {
-                    $path = $image->store('product_images', 'public');
-                    ProductGallery::create([
+                    $fileName = $image->hashName();
+                    $image->storeAs('public/product_images', $fileName);
+                    $productGallery = ProductGallery::create([
                         'products_id' => $product->id,
-                        'url' => $path,
+                        'url' => $fileName,
                     ]);
+                    $productGalleries[] = $productGallery;
                 }
             }
-
+            $product['galleries'] = $productGalleries;
+            $product['category'] = $product->category;
             return ResponseFormatter::success($product, 'Tambah Category berhasil');
         } catch (\Throwable $error) {
             return ResponseFormatter::error([

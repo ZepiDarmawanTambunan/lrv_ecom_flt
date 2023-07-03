@@ -23,7 +23,6 @@ class AuthService{
     });
     
     var response = await http.post(url, headers: headers, body: body);
-    print(response.body);
   
     if(response.statusCode == 200){
       var data = jsonDecode(response.body)['data'];
@@ -46,7 +45,6 @@ class AuthService{
       'password': password,
     });
     var response = await http.post(url, headers: headers, body: body);
-    print(response.body);
     if(response.statusCode == 200){
       var data = jsonDecode(response.body)['data'];
       data['user']['token'] = 'Bearer '+data['access_token'];

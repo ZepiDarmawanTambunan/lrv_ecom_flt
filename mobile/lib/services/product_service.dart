@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:mobile/models/product_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:mobile/providers/product_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductService{
@@ -28,11 +29,11 @@ class ProductService{
         }
         return products;
       } else {
-        throw Exception('Gagal mendapatkan data pengguna');
+        throw Exception('Gagal mendapatkan data product');
       }
   }
 
-  Future<bool> createProduct({
+  Future createProduct({
     required String name, 
     required String description, 
     required String tags,
@@ -53,7 +54,6 @@ class ProductService{
       request.fields['tags'] = tags;
       request.fields['price'] = price;
       request.fields['categories_id'] = categoriesId.toString();
-      print(categoriesId.toString());
 
     for (int i = 0; i < listImagePath.length; i++) {
       var file = await http.MultipartFile.fromPath(
@@ -64,13 +64,18 @@ class ProductService{
       request.files.add(file);
     }
 
-    var response = await request.send();
-    var responseString = await response.stream.bytesToString();
-    print(responseString);
-    return true;
-  } catch (e) {
-    print("$e");
-    return false;
+    final response = await request.send();
+    final responseString = await response.stream.bytesToString();
+    final responseData = jsonDecode(responseString)['data'];
+
+      if (response.statusCode == 200) {
+        final product = ProductModel.fromJson(responseData);
+        return product;
+      } else {
+        throw Exception(responseData);
+      }
+    } catch (e) {
+        throw Exception(e);
+    }
   }
-}
 }

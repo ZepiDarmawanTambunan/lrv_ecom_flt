@@ -23,9 +23,8 @@ class CategoryProvider with ChangeNotifier{
 
   Future<void> getcategories()async{
     try {
-      List<CategoryModel> categories = await CategoryService().getCategories();
-      _categories = categories;
-      notifyListeners();
+      List<CategoryModel> result = await CategoryService().getCategories();
+      categories = result;
     } catch (e) {
       print(e);
     }
