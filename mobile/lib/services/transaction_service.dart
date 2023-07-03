@@ -3,8 +3,8 @@ import 'package:mobile/models/cart_model.dart';
 import 'package:http/http.dart' as http;
 
 class TransactionService{
-  String baseUrl = 'http://10.0.2.2:8000/api'; // localhost
-  // String baseUrl = 'http://192.168.114.97:8000/api'; // localhost ip wifi to hp
+  // String baseUrl = 'http://10.0.2.2:8000/api'; // localhost
+  String baseUrl = 'http://192.168.1.7:8000/api'; // localhost ip this laptop
 
   Future<bool> checkout (String token, List<CartModel> carts, num totalPrice)async{
 

@@ -43,28 +43,6 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             ),
-            CachedNetworkImage(
-              imageUrl: 'https://static.vecteezy.com/system/resources/previews/000/574/512/original/vector-sign-of-user-icon.jpg',
-              cacheManager: CacheManager(
-                Config(
-                  'https://static.vecteezy.com/system/resources/previews/000/574/512/original/vector-sign-of-user-icon.jpg',
-                  stalePeriod: const Duration(days: 7)
-                )
-              ),
-              imageBuilder: (context, imageProvider) => Container(
-                width: 54,
-                height: 54,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    image: imageProvider,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              placeholder: (context, url) => CircularProgressIndicator(),
-              errorWidget: (context, url, error) => Icon(Icons.error),
-            ),
           ],
         ),
       );

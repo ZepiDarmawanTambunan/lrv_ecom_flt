@@ -4,8 +4,8 @@ import 'package:mobile/models/category_model.dart';
 import 'package:http/http.dart' as http;
 
 class CategoryService{
-  String baseUrl = 'http://10.0.2.2:8000/api'; // localhost
-  // String baseUrl = 'http://192.168.114.97:8000/api'; // localhost ip wifi to hp
+  // String baseUrl = 'http://10.0.2.2:8000/api'; // localhost
+  String baseUrl = 'http://192.168.1.7:8000/api'; // localhost ip wifi this lapotp
 
   Future<List<CategoryModel>> getCategories ()async{
       var url = Uri.parse('$baseUrl/categories');

@@ -16,19 +16,13 @@ class _AddProductPageState extends State<AddProductPage> {
   TextEditingController nameController = TextEditingController(text: '');
   TextEditingController descController = TextEditingController(text: '');
   TextEditingController tagsController = TextEditingController(text: '');
-  TextEditingController priceController = TextEditingController(text: '');
+  TextEditingController priceController = TextEditingController();
 
     @override
   void initState() {
+    CategoryProvider categoryProvider = Provider.of<CategoryProvider>(context, listen: false);
+    categoryProvider.getcategories();
     super.initState();
-
-    // Add listener to the priceController
-    priceController.addListener(() {
-      if (priceController.text.isEmpty) {
-        // Handle empty text, set the value to '0'
-        priceController.text = '0';
-      }
-    });
   }
 
     @override
@@ -47,8 +41,6 @@ class _AddProductPageState extends State<AddProductPage> {
     print('build');
     ImageProductProvider imageProductProvider = Provider.of<ImageProductProvider>(context, listen: false);
     CategoryProvider categoryProvider = Provider.of<CategoryProvider>(context, listen: false);
-    List<CategoryModel> listCategory = categoryProvider.categories;
-    categoryProvider.getcategories();
 
     AppBar header(){
       return AppBar(
@@ -93,7 +85,7 @@ class _AddProductPageState extends State<AddProductPage> {
       );
     }
 
-    Widget dropDownCategories(){
+    Widget dropDownCategories(CategoryProvider categoryProvider){
       return Container(
         margin: EdgeInsets.only(top: 30),
         child: Column(
@@ -103,7 +95,7 @@ class _AddProductPageState extends State<AddProductPage> {
             DropdownButton(
               isExpanded: true,
               value: categoryProvider.selectedCategory,
-              items: listCategory.map((category) {
+              items: categoryProvider.categories.map((category) {
                 return DropdownMenuItem(
                   value: category.id as int,
                   child: Text(category.name,         
@@ -121,6 +113,32 @@ class _AddProductPageState extends State<AddProductPage> {
       );
     }
 
+    Widget btnUploadAndSubmit(){
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+        ElevatedButton(onPressed: (){
+          imageProductProvider.selectedMultipleImage(context);
+        }, child: Text('Pick Image'),
+        style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.green),
+          ),
+        ),
+        SizedBox(width: 20,),
+        ElevatedButton(onPressed: (){
+          imageProductProvider.uploadImage(
+            name: nameController.text,
+            description: descController.text,
+            price: priceController.text,
+            tags: tagsController.text,
+            categoriesId: categoryProvider.selectedCategory,
+            listImagePath: imageProductProvider.listImagePath
+          );
+        }, child: Text('Submit'),),
+        ],
+      );
+    }
+
     Widget content(){
       return Container(
         padding: EdgeInsets.symmetric(
@@ -135,30 +153,12 @@ class _AddProductPageState extends State<AddProductPage> {
               inputProduct(title: 'description', hintText: 'your desc product', controller: descController),
               inputProduct(title: 'price', hintText: 'your price product', controller: priceController, isNumeric: true),
               inputProduct(title: 'tags', hintText: 'your tags product', controller: tagsController),
-              dropDownCategories(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                ElevatedButton(onPressed: (){
-                  imageProductProvider.selectedMultipleImage(context);
-                }, child: Text('Pick Image'),
-                style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(Colors.green), // Mengubah warna latar belakang tombol
-                  ),
-                ),
-                SizedBox(width: 20,),
-                ElevatedButton(onPressed: (){
-                  imageProductProvider.uploadImage(
-                    name: nameController.text,
-                    description: descController.text,
-                    price: priceController.text,
-                    tags: tagsController.text,
-                    categoriesId: categoryProvider.selectedCategory,
-                    listImagePath: imageProductProvider.listImagePath
-                  );
-                }, child: Text('Submit'),),
-                ],
+              Consumer<CategoryProvider>(
+                builder: (context, value, child){
+                  return value.categories.length > 0 ? dropDownCategories(value) : CircularProgressIndicator();
+                }
               ),
+              btnUploadAndSubmit(),
             ],
           ),
         ),

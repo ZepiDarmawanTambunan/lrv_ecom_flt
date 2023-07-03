@@ -4,8 +4,8 @@ import 'package:mobile/models/user_model.dart';
 import 'package:http/http.dart' as http;
 
 class AuthService{
-  String baseUrl = 'http://10.0.2.2:8000/api'; // localhost emulator
-  // String baseUrl = 'http://192.168.114.97:8000/api'; // localhost ip wifi to hp
+  // String baseUrl = 'http://10.0.2.2:8000/api'; // localhost
+  String baseUrl = 'http://192.168.1.7:8000/api'; // localhost ip this wifi laptop
 
     Future<UserModel> register({
     required String name, 
@@ -46,6 +46,7 @@ class AuthService{
       'password': password,
     });
     var response = await http.post(url, headers: headers, body: body);
+    print(response.body);
     if(response.statusCode == 200){
       var data = jsonDecode(response.body)['data'];
       data['user']['token'] = 'Bearer '+data['access_token'];

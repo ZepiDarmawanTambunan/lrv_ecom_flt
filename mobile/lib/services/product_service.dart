@@ -4,8 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductService{
-  String baseUrl = 'http://10.0.2.2:8000/api'; // localhost
-  // String baseUrl = 'http://192.168.114.97:8000/api'; // localhost ip wifi to hp
+  // String baseUrl = 'http://10.0.2.2:8000/api'; // localhost
+  String baseUrl = 'http://192.168.1.7:8000/api'; // localhost ip wifi this laptop
   
   late SharedPreferences _prefs;
 
